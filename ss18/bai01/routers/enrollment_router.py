@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from database import get_db
@@ -22,7 +22,7 @@ def register_course(data: EnrollmentCreate, db: Session = Depends(get_db)):
 def get_student_courses(student_id: int, db: Session = Depends(get_db)):
     student = db.query(Student).filter(Student.id == student_id).first()
     if not student:
-        return {"message": "Student not found"}
+        raise HTTPException(status_code=404, detail="Student not found")
 
     courses = []
     for enrollment in student.enrollments:
